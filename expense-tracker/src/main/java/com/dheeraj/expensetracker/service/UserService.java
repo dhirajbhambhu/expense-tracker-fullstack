@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder){
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,JwtService jwtService){
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder =bCryptPasswordEncoder;
+        this.jwtService = jwtService;
     }
 
     public User register(User user){
@@ -23,7 +25,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new RuntimeException("Email not found"));
         if(bCryptPasswordEncoder.matches(password, user.getPassword())){
-            return "Login successful";
+            return jwtService.generateToken(email);
         }
         throw new RuntimeException("Invalid Password");
     }
