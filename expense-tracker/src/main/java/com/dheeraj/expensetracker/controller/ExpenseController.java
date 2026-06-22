@@ -18,6 +18,10 @@ public class ExpenseController {
     public Expense createExpense(@RequestBody Expense expense){
         return expenseService.addExpense(expense);
     }
+    @PostMapping("/add")
+    public Expense addExpense(@RequestBody Expense expense){
+        return expenseService.addExpense(expense);
+    }
     @GetMapping("/get")
     public List<Expense> getExpense(){
         return expenseService.getAllexpenses();
