@@ -4,6 +4,7 @@ import com.dheeraj.expensetracker.dto.ExpenseRequestDTO;
 import com.dheeraj.expensetracker.dto.ExpenseResponseDTO;
 import com.dheeraj.expensetracker.entity.Expense;
 import com.dheeraj.expensetracker.service.ExpenseService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
     @PostMapping
-    public ExpenseResponseDTO createExpense(@RequestBody ExpenseRequestDTO requestDTO){
+    public ExpenseResponseDTO createExpense(@Valid @RequestBody ExpenseRequestDTO requestDTO){
         return expenseService.createExpense(requestDTO);
     }
    
