@@ -7,6 +7,8 @@ import com.dheeraj.expensetracker.entity.Expense;
 import com.dheeraj.expensetracker.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -36,6 +38,16 @@ public class ExpenseController {
 
         return expenseService.getAnalytics();
 
+    }
+  
+    @GetMapping("/page")
+    public Page<ExpenseResponseDTO> getAllExpenses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return expenseService.getAllExpenses(page, size, sortBy,direction);
     }
     @PutMapping("/{id}")
     public Expense updateExpense(@PathVariable Long id,@RequestBody Expense expense){
