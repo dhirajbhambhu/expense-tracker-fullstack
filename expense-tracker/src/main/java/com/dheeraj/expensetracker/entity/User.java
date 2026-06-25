@@ -22,4 +22,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Expense> expenses;
+
+    @OneToOne(mappedBy = "user")
+    private Budget budget;
 }
