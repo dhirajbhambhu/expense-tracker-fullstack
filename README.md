@@ -1,203 +1,176 @@
-# Expense Tracker Backend
+# 💰 Expense Tracker (Full Stack)
 
-A RESTful Expense Tracker API built using Spring Boot and MySQL. This project helps users manage expenses and categories through CRUD operations and serves as the backend foundation for a full-stack expense tracking application.
-
-## 🚀 Tech Stack
-
-* Java 21
-* Spring Boot
-* Spring Data JPA
-* Hibernate
-* MySQL
-* Lombok
-* Maven
-
-## 📁 Project Structure
-
-src/main/java/com/dheeraj/expensetracker
-
-├── controller
-
-├── service
-
-├── repository
-
-├── entity
-
-├── security
-
-├── exception
-
-├── config
-
-└── dto
-
-## ✅ Features Implemented
-
-### Expense Management
-
-* Create Expense
-* Get All Expenses
-* Get Expense By ID
-* Update Expense
-* Delete Expense
-
-### Category Management
-
-* Create Category
-* Get All Categories
-* Get Category By ID
-* Delete Category
-
-### Database
-
-* MySQL Integration
-* Hibernate ORM
-* Auto Table Creation using JPA
-* User ↔ Expense Relationship
-* One User → Many Expenses
-* Many Expenses → One User
-* Infinite Recursion Prevention using `@JsonIgnore`
-
-## 📌 API Endpoints
-
-### Expense APIs
-
-#### Create Expense
-
-POST /expenses
-
-Request Body:
-
-```json
-{
-  "title": "Pizza",
-  "amount": 250,
-  "description": "Dominos Pizza"
-}
-```
-
-#### Get All Expenses
-
-GET /expenses
-
-#### Get Expense By ID
-
-GET /expenses/{id}
-
-#### Update Expense
-
-PUT /expenses/{id}
-
-```json
-{
-  "title": "Burger",
-  "amount": 300
-}
-```
-
-#### Delete Expense
-
-DELETE /expenses/{id}
+A full-stack Expense Tracker application built using **Spring Boot**, **React**, **MySQL**, and **JWT Authentication**. The project allows users to register, log in securely, and manage their expenses.
 
 ---
 
-### Category APIs
+## 🚀 Tech Stack
 
-#### Create Category
+### Backend
+- Java 21
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- JWT Authentication
+- BCrypt Password Encryption
+- MySQL
+- Maven
+- Swagger (OpenAPI)
 
-POST /category
+### Frontend
+- React
+- React Router DOM
+- Axios
+- Tailwind CSS
+- Local Storage (JWT)
 
-Request Body:
+---
 
-```json
-{
-  "name": "Food"
-}
+## ✨ Features
+
+### Authentication
+- ✅ User Registration
+- ✅ User Login
+- ✅ JWT Authentication
+- ✅ BCrypt Password Encryption
+- ✅ Protected Routes
+- ✅ Logout
+- ✅ Automatic Redirect after Login
+- ✅ Token stored in Local Storage
+
+### Validation
+- ✅ Client-side Form Validation
+- ✅ Backend Validation
+- ✅ Invalid Login Handling
+- ✅ Duplicate User Handling
+
+---
+
+## 📂 Project Structure
+
+### Backend
+
+```
+expense-tracker/
+├── controller
+├── service
+├── repository
+├── model
+├── security
+├── config
+└── dto
 ```
 
-#### Get All Categories
+### Frontend
 
-GET /category
+```
+expense-tracker-frontend/
+├── src
+│   ├── pages
+│   │   ├── Login
+│   │   ├── Register
+│   │   └── Dashboard
+│   ├── components
+│   │   └── ProtectedRoute
+│   ├── routes
+│   └── services
+```
 
-#### Get Category By ID
+---
 
-GET /category/{id}
+## 🔐 Authentication Flow
 
-#### Delete Category
+```
+Register
+      │
+      ▼
+Save User in MySQL
+      │
+      ▼
+Login
+      │
+      ▼
+JWT Generated
+      │
+      ▼
+Store Token in Local Storage
+      │
+      ▼
+Protected Dashboard
+      │
+      ▼
+Logout
+      │
+      ▼
+Remove JWT
+```
 
-DELETE /category/{id}
+---
 
-## 🗄️ Database Schema
+## 📸 Current Screens
 
-### Expense
+- Login Page
+- Register Page
+- Dashboard
+- Protected Routes
 
-| Field       | Type      |
-| ----------- | --------- |
-| id          | Long      |
-| title       | String    |
-| amount      | Double    |
-| description | String    |
-| date        | LocalDate |
+---
 
-### Category
+## 🛠 API Endpoints
 
-| Field | Type   |
-| ----- | ------ |
-| id    | Long   |
-| name  | String |
+### Authentication
 
-### User
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/auth/register` | Register User |
+| POST | `/auth/login` | Login User |
 
-| Field    | Type    |
-| -------- | ------- |
-| id       | Long    |
-| name     | String  |
-| age      | Integer |
-| city     | String  |
-| mobileNo | String  |
+---
 
-## 🧪 Testing
+## 📌 Upcoming Features
 
-All APIs tested successfully using Postman.
+- Expense CRUD
+- Category CRUD
+- Dashboard Statistics
+- Charts
+- Budget Management
+- Reports
+- Profile Management
+- Responsive UI Improvements
 
-### Expense APIs
+---
 
-* Create Expense ✅
-* Get All Expenses ✅
-* Get Expense By ID ✅
-* Update Expense ✅
-* Delete Expense ✅
+## ▶️ Run Locally
 
-### Category APIs
+### Backend
 
-* Create Category ✅
-* Get All Categories ✅
-* Get Category By ID ✅
-* Delete Category ✅
+```bash
+mvn spring-boot:run
+```
 
-## 🔜 Upcoming Features
+### Frontend
 
-* Register API
-* Login API
-* BCrypt Password Encoding
-* JWT Authentication
-* Spring Security
-* DTO Layer
-* Validation
-* Global Exception Handler
-* Budget Feature
-* Expense Analytics
-* Unit Testing
-* AWS Deployment
-* React Frontend
-* Docker
-* CI/CD
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 📖 API Documentation
+
+Swagger UI
+
+```
+https://expense-tracker-fullstack-project-1.onrender.com/swagger-ui/index.html
+```
+
+---
 
 ## 👨‍💻 Author
 
-Dhiraj Bhambhu
+**Dhiraj Bhambhu**
 
-* GitHub: https://github.com/dhirajbhambhu
-* LinkedIn: https://www.linkedin.com/in/dhiraj-bhambhu/
+GitHub:
+https://github.com/dhirajbhambhu
 
