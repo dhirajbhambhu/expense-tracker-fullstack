@@ -23,6 +23,7 @@ A full-stack Expense Tracker application built using **Spring Boot**, **React**,
 - Axios
 - Tailwind CSS
 - Local Storage (JWT)
+- Navigation
 
 ---
 
