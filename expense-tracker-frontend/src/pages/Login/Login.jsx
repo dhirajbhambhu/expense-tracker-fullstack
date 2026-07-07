@@ -22,11 +22,15 @@ function Login() {
 
   try {
     const response = await api.post("/auth/login", {
-      email,
-      password,
-    });
+  email,
+  password,
+});
 
-    localStorage.setItem("token", response.data);
+console.log(response);
+console.log(response.data);
+console.log(typeof response.data);
+
+localStorage.setItem("token", response.data);
 navigate("/dashboard");
 console.log("Token Saved Successfully"); 
   } catch (error) {
