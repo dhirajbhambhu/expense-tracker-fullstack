@@ -7,6 +7,11 @@ function Expenses() {
   const [description, setDescription] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [editId, setEditId] = useState(null);
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
 
   async function fetchExpenses() {
     try {
@@ -26,15 +31,35 @@ function Expenses() {
 
       setExpenses(response.data.content);
     } catch (error) {
-  console.log(error);
-  console.log(error.response);
-  console.log(error.response.data);
-}
+      console.log(error);
+      alert("Failed to load expenses");
+    }
   }
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
+  async function searchExpenses() {
+    if (keyword.trim() === "") {
+      fetchExpenses();
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await api.get("/expenses/search", {
+        params: {
+          keyword: keyword,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setExpenses(response.data);
+    } catch (error) {
+      console.log(error);
+      alert("Search Failed");
+    }
+  }
 
   async function handleExpense(event) {
     event.preventDefault();
@@ -99,7 +124,6 @@ function Expenses() {
       fetchExpenses();
     } catch (error) {
       console.log(error);
-      console.log(error.response);
       alert("Operation Failed");
     }
   }
@@ -115,7 +139,6 @@ function Expenses() {
       });
 
       alert("Expense Deleted Successfully");
-
       fetchExpenses();
     } catch (error) {
       console.log(error);
@@ -125,7 +148,6 @@ function Expenses() {
 
   function editExpense(expense) {
     setEditId(expense.id);
-
     setTitle(expense.title);
     setAmount(expense.amount);
     setDescription(expense.description);
@@ -141,16 +163,15 @@ function Expenses() {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-[500px]">
+
         <h1 className="text-3xl font-bold text-center mb-6">
           {editId === null ? "Add Expense" : "Update Expense"}
         </h1>
 
         <form onSubmit={handleExpense}>
-          {/* Title */}
+
           <div className="mb-4">
-            <label className="block mb-2 font-medium">
-              Title
-            </label>
+            <label className="block mb-2 font-medium">Title</label>
 
             <input
               type="text"
@@ -161,11 +182,8 @@ function Expenses() {
             />
           </div>
 
-          {/* Amount */}
           <div className="mb-4">
-            <label className="block mb-2 font-medium">
-              Amount
-            </label>
+            <label className="block mb-2 font-medium">Amount</label>
 
             <input
               type="number"
@@ -176,11 +194,8 @@ function Expenses() {
             />
           </div>
 
-          {/* Description */}
           <div className="mb-6">
-            <label className="block mb-2 font-medium">
-              Description
-            </label>
+            <label className="block mb-2 font-medium">Description</label>
 
             <textarea
               placeholder="Enter Description"
@@ -213,6 +228,33 @@ function Expenses() {
         <h2 className="text-2xl font-bold mb-4">
           All Expenses
         </h2>
+
+        <div className="flex gap-2 mb-5">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            className="flex-1 border border-gray-300 rounded-lg p-3"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+
+          <button
+            onClick={searchExpenses}
+            className="bg-blue-600 text-white px-4 rounded-lg hover:bg-blue-700"
+          >
+            Search
+          </button>
+
+          <button
+            onClick={() => {
+              setKeyword("");
+              fetchExpenses();
+            }}
+            className="bg-gray-600 text-white px-4 rounded-lg hover:bg-gray-700"
+          >
+            Reset
+          </button>
+        </div>
 
         {expenses.length === 0 ? (
           <p className="text-gray-500">No expenses found.</p>

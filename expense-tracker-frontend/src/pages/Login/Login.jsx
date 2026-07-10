@@ -26,9 +26,17 @@ function Login() {
   password,
 });
 
+console.log("FULL RESPONSE");
 console.log(response);
+
+console.log("RESPONSE DATA");
 console.log(response.data);
+
+console.log("TYPE");
 console.log(typeof response.data);
+
+console.log("JSON");
+console.log(JSON.stringify(response.data));
 
 localStorage.setItem("token", response.data);
 navigate("/dashboard");
