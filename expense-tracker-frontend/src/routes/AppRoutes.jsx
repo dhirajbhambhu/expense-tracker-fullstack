@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 import ProtectedRoute from "../components/ProtectedRoute";
+import Analytics from "../pages/Analytics/Analytics";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Expenses from "../pages/Expenses/Expenses";
 import Login from "../pages/Login/Login";
@@ -21,6 +21,14 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+    path="/analytics"
+    element={
+        <ProtectedRoute>
+            <Analytics />
+        </ProtectedRoute>
+    }
+/>
 
         <Route
           path="/expenses"
