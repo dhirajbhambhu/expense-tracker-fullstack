@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Analytics from "../pages/Analytics/Analytics";
+import Budget from "../pages/Budget/Budget";
 import Categories from "../pages/Categories/Categories";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Expenses from "../pages/Expenses/Expenses";
@@ -13,6 +14,7 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
@@ -36,6 +38,15 @@ function AppRoutes() {
         />
 
         <Route
+          path="/categories"
+          element={
+            <ProtectedRoute>
+              <Categories />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/analytics"
           element={
             <ProtectedRoute>
@@ -45,13 +56,14 @@ function AppRoutes() {
         />
 
         <Route
-          path="/categories"
+          path="/budget"
           element={
             <ProtectedRoute>
-              <Categories />
+              <Budget />
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </BrowserRouter>
   );
