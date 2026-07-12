@@ -8,10 +8,15 @@ function Expenses() {
   const [expenses, setExpenses] = useState([]);
   const [editId, setEditId] = useState(null);
   const [keyword, setKeyword] = useState("");
+  const [categories, setCategories] = useState([]);
+const [selectedCategory, setSelectedCategory] = useState("");
+const [startDate, setStartDate] = useState("");
+const [endDate, setEndDate] = useState("");
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
+ useEffect(() => {
+  fetchExpenses();
+  fetchCategories();
+}, []);
 
   async function fetchExpenses() {
     try {
@@ -35,7 +40,21 @@ function Expenses() {
       alert("Failed to load expenses");
     }
   }
+async function fetchCategories() {
+  try {
+    const token = localStorage.getItem("token");
 
+    const response = await api.get("/category", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setCategories(response.data);
+  } catch (error) {
+    console.log(error);
+  }
+}
   async function searchExpenses() {
     if (keyword.trim() === "") {
       fetchExpenses();
@@ -60,6 +79,35 @@ function Expenses() {
       alert("Search Failed");
     }
   }
+  async function filterExpenses() {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await api.get("/expenses/filter", {
+      params: {
+        categoryId: selectedCategory || null,
+        startDate: startDate || null,
+        endDate: endDate || null,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setExpenses(response.data);
+  } catch (error) {
+    console.log(error);
+    alert("Filter Failed");
+  }
+}
+
+function resetFilters() {
+  setSelectedCategory("");
+  setStartDate("");
+  setEndDate("");
+
+  fetchExpenses();
+}
 
   async function handleExpense(event) {
     event.preventDefault();
@@ -162,7 +210,7 @@ function Expenses() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-[500px]">
+     <div className="bg-white p-8 rounded-lg shadow-lg w-[900px]">
 
         <h1 className="text-3xl font-bold text-center mb-6">
           {editId === null ? "Add Expense" : "Update Expense"}
@@ -228,6 +276,55 @@ function Expenses() {
         <h2 className="text-2xl font-bold mb-4">
           All Expenses
         </h2>
+        <div className="grid grid-cols-2 gap-3 mb-5">
+
+  <select
+    className="border rounded-lg p-3"
+    value={selectedCategory}
+    onChange={(e) => setSelectedCategory(e.target.value)}
+  >
+    <option value="">All Categories</option>
+
+    {categories.map((category) => (
+      <option key={category.id} value={category.id}>
+        {category.name}
+      </option>
+    ))}
+  </select>
+
+  <input
+    type="date"
+    className="border rounded-lg p-3"
+    value={startDate}
+    onChange={(e) => setStartDate(e.target.value)}
+  />
+
+  <input
+    type="date"
+    className="border rounded-lg p-3"
+    value={endDate}
+    onChange={(e) => setEndDate(e.target.value)}
+  />
+
+  <div className="flex gap-2">
+
+    <button
+      onClick={filterExpenses}
+      className="bg-green-600 text-white px-4 rounded-lg flex-1"
+    >
+      Filter
+    </button>
+
+    <button
+      onClick={resetFilters}
+      className="bg-gray-600 text-white px-4 rounded-lg flex-1"
+    >
+      Reset
+    </button>
+
+  </div>
+
+</div>
 
         <div className="flex gap-2 mb-5">
           <input
@@ -255,6 +352,103 @@ function Expenses() {
             Reset
           </button>
         </div>
+        {/* Filter Section */}
+
+<div className="border rounded-lg p-4 mb-5 bg-gray-50">
+
+  <h3 className="text-lg font-bold mb-3">
+    Filter Expenses
+  </h3>
+
+  <div className="grid grid-cols-3 gap-3">
+
+    <select
+      value={selectedCategory}
+      onChange={(e) => setSelectedCategory(e.target.value)}
+      className="border rounded-lg p-3"
+    >
+      <option value="">All Categories</option>
+
+      {categories.map((category) => (
+        <option
+          key={category.id}
+          value={category.id}
+        >
+          {category.name}
+        </option>
+      ))}
+    </select>
+
+    <input
+      type="date"
+      value={startDate}
+      onChange={(e) => setStartDate(e.target.value)}
+      className="border rounded-lg p-3"
+    />
+
+    <input
+      type="date"
+      value={endDate}
+      onChange={(e) => setEndDate(e.target.value)}
+      className="border rounded-lg p-3"
+    />
+
+  </div>
+
+  <div className="flex gap-3 mt-4">
+
+    <button
+      type="button"
+      onClick={filterExpenses}
+      className="flex-1 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700"
+    >
+      Apply Filter
+    </button>
+
+    <button
+      type="button"
+      onClick={resetFilters}
+      className="flex-1 bg-gray-600 text-white p-3 rounded-lg hover:bg-gray-700"
+    >
+      Clear Filter
+    </button>
+
+  </div>
+
+</div>
+
+{/* Search Section */}
+
+<div className="flex gap-3 mb-6">
+
+  <input
+    type="text"
+    placeholder="Search by title..."
+    value={keyword}
+    onChange={(e) => setKeyword(e.target.value)}
+    className="flex-1 border rounded-lg p-3"
+  />
+
+  <button
+    type="button"
+    onClick={searchExpenses}
+    className="bg-blue-600 text-white px-6 rounded-lg hover:bg-blue-700"
+  >
+    Search
+  </button>
+
+  <button
+    type="button"
+    onClick={() => {
+      setKeyword("");
+      fetchExpenses();
+    }}
+    className="bg-gray-600 text-white px-6 rounded-lg hover:bg-gray-700"
+  >
+    Reset
+  </button>
+
+</div>
 
         {expenses.length === 0 ? (
           <p className="text-gray-500">No expenses found.</p>
