@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 import Analytics from "../pages/Analytics/Analytics";
 import Budget from "../pages/Budget/Budget";
 import Categories from "../pages/Categories/Categories";
+import Charts from "../pages/Charts/Charts";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Expenses from "../pages/Expenses/Expenses";
 import Login from "../pages/Login/Login";
@@ -27,6 +27,15 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+    path="/charts"
+    element={
+        <ProtectedRoute>
+            <Charts />
+        </ProtectedRoute>
+    }
+/>
 
         <Route
           path="/expenses"

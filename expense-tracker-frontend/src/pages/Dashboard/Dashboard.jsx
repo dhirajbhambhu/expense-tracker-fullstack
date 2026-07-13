@@ -4,55 +4,56 @@ function Dashboard() {
 
   const navigate = useNavigate();
 
-  function handleLogout() {
+  function logout() {
     localStorage.removeItem("token");
     navigate("/");
   }
 
   return (
+
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
 
-      <div className="bg-white shadow-xl rounded-xl p-10 w-[900px]">
+      <div className="bg-white shadow-lg rounded-xl p-10 w-[500px]">
 
         <h1 className="text-4xl font-bold text-center mb-10">
-          Expense Tracker Dashboard
+          Dashboard
         </h1>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid gap-4">
 
           <button
             onClick={() => navigate("/expenses")}
-            className="bg-blue-600 text-white text-xl p-6 rounded-xl hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white p-4 rounded-lg"
           >
-            💰 Expenses
-          </button>
-
-          <button
-            onClick={() => navigate("/categories")}
-            className="bg-green-600 text-white text-xl p-6 rounded-xl hover:bg-green-700 transition"
-          >
-            📂 Categories
+            Expenses
           </button>
 
           <button
             onClick={() => navigate("/analytics")}
-            className="bg-purple-600 text-white text-xl p-6 rounded-xl hover:bg-purple-700 transition"
+            className="bg-green-600 text-white p-4 rounded-lg"
           >
-            📊 Analytics
+            Analytics
           </button>
 
           <button
             onClick={() => navigate("/budget")}
-            className="bg-yellow-500 text-white text-xl p-6 rounded-xl hover:bg-yellow-600 transition"
+            className="bg-yellow-500 text-white p-4 rounded-lg"
           >
-            💵 Budget
+            Budget
           </button>
 
           <button
-            onClick={handleLogout}
-            className="col-span-2 bg-red-600 text-white text-xl p-5 rounded-xl hover:bg-red-700 transition"
+            onClick={() => navigate("/charts")}
+            className="bg-purple-600 text-white p-4 rounded-lg"
           >
-            🚪 Logout
+            Charts
+          </button>
+
+          <button
+            onClick={logout}
+            className="bg-red-600 text-white p-4 rounded-lg"
+          >
+            Logout
           </button>
 
         </div>
@@ -60,6 +61,7 @@ function Dashboard() {
       </div>
 
     </div>
+
   );
 }
 
