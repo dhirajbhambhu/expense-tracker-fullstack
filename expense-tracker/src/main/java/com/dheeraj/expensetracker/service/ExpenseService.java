@@ -1,8 +1,6 @@
 package com.dheeraj.expensetracker.service;
+import com.dheeraj.expensetracker.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
-import com.dheeraj.expensetracker.dto.AnalyticsResponseDTO;
-import com.dheeraj.expensetracker.dto.ExpenseRequestDTO;
-import com.dheeraj.expensetracker.dto.ExpenseResponseDTO;
 import com.dheeraj.expensetracker.entity.Expense;
 import com.dheeraj.expensetracker.exception.ResourceNotFoundException;
 import com.dheeraj.expensetracker.repository.ExpenseRepository;
@@ -12,7 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PostMapping;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,6 +56,33 @@ public class ExpenseService {
     public Expense getExpenseById(Long id) {
         return expenseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+    }
+
+    public List<ExpenseResponseDTO> searchExpenses(String keyword) {
+
+        List<Expense> expenses =
+                expenseRepository.findByTitleContainingIgnoreCase(keyword);
+
+        List<ExpenseResponseDTO> response = new ArrayList<>();
+
+        for (Expense expense : expenses) {
+
+            ExpenseResponseDTO dto = new ExpenseResponseDTO();
+
+            dto.setId(expense.getId());
+            dto.setTitle(expense.getTitle());
+            dto.setAmount(expense.getAmount());
+            dto.setDescription(expense.getDescription());
+            dto.setDate(expense.getDate());
+
+            if (expense.getCategory() != null) {
+                dto.setCategoryName(expense.getCategory().getName());
+            }
+
+            response.add(dto);
+        }
+
+        return response;
     }
 
     public Expense updateExpense(Long id, Expense expense) {
@@ -98,13 +128,13 @@ public class ExpenseService {
             String sortBy,
             String direction) {
 
-                Sort sort = direction.equalsIgnoreCase("desc")
-                        ? Sort.by(sortBy).descending()
-                        : Sort.by(sortBy).ascending();
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(
                 page,
                 size,
-                Sort.by(sortBy) 
+                Sort.by(sortBy)
         );
         Page<Expense> expensePage = expenseRepository.findAll(pageable);
         return expensePage.map(expense -> {
@@ -123,6 +153,96 @@ public class ExpenseService {
 
             return dto;
         });
+    }
+
+    public List<ExpenseResponseDTO> filterExpenses(
+            Long categoryId,
+            LocalDate startDate,
+            LocalDate endDate) {
+
+        List<Expense> expenses;
+
+        if (categoryId != null && startDate != null && endDate != null) {
+
+            expenses = expenseRepository.findByCategoryIdAndDateBetween(
+                    categoryId,
+                    startDate,
+                    endDate
+            );
+
+        } else if (categoryId != null) {
+
+            expenses = expenseRepository.findByCategoryId(categoryId);
+
+        } else if (startDate != null && endDate != null) {
+
+            expenses = expenseRepository.findByDateBetween(
+                    startDate,
+                    endDate
+            );
+
+        } else {
+
+            expenses = expenseRepository.findAll();
+
+        }
+
+        return expenses.stream().map(expense -> {
+
+            ExpenseResponseDTO dto = new ExpenseResponseDTO();
+
+            dto.setId(expense.getId());
+            dto.setTitle(expense.getTitle());
+            dto.setAmount(expense.getAmount());
+            dto.setDescription(expense.getDescription());
+            dto.setDate(expense.getDate());
+
+            if (expense.getCategory() != null) {
+                dto.setCategoryName(expense.getCategory().getName());
+            }
+
+            return dto;
+
+        }).toList();
+    }
+    public List<ChartCategoryDTO> getCategoryChart() {
+
+        List<Object[]> result = expenseRepository.getCategoryChart();
+
+        List<ChartCategoryDTO> response = new ArrayList<>();
+
+        for (Object[] row : result) {
+
+            response.add(
+                    new ChartCategoryDTO(
+                            row[0].toString(),
+                            (BigDecimal) row[1]
+                    )
+            );
+
+        }
+
+        return response;
+    }
+
+    public List<ChartMonthDTO> getMonthlyChart() {
+
+        List<Object[]> result = expenseRepository.getMonthlyChart();
+
+        List<ChartMonthDTO> response = new ArrayList<>();
+
+        for (Object[] row : result) {
+
+            response.add(
+                    new ChartMonthDTO(
+                            row[0].toString(),
+                            (BigDecimal) row[1]
+                    )
+            );
+
+        }
+
+        return response;
     }
 }
 

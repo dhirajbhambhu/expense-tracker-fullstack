@@ -54,6 +54,21 @@ public class CategoryController {
         return categoryService.getCategoryById(id);
     }
     @Operation(
+            summary = "Update Category",
+            description = "Updates an existing category."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
+    @PutMapping("/{id}")
+    public Category updateCategory(
+            @PathVariable Long id,
+            @RequestBody Category category) {
+
+        return categoryService.updateCategory(id, category);
+    }
+    @Operation(
             summary = "Delete Category",
             description = "Deletes a category by ID."
     )

@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BudgetResponseDTO {
+public class ChartCategoryDTO {
 
-    private Long id;
+    private String category;
 
-    private Double monthlyBudget;
+    private BigDecimal amount;
 
-    private Double spentAmount;
-
-    private Double remainingAmount;
 }

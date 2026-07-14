@@ -28,6 +28,15 @@ public class CategoryService {
            return categoryRepository.findById(id)
                    .orElseThrow(() ->  new ResourceNotFoundException("ID not found"));
        }
+    public Category updateCategory(Long id, Category category) {
+
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        existingCategory.setName(category.getName());
+
+        return categoryRepository.save(existingCategory);
+    }
        public void deleteCategory(Long id){
            Category category = categoryRepository.findById(id)
                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));

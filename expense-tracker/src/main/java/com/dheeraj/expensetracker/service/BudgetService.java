@@ -5,6 +5,7 @@ import com.dheeraj.expensetracker.dto.BudgetResponseDTO;
 import com.dheeraj.expensetracker.entity.Budget;
 import com.dheeraj.expensetracker.entity.Expense;
 import com.dheeraj.expensetracker.entity.User;
+import com.dheeraj.expensetracker.exception.ResourceNotFoundException;
 import com.dheeraj.expensetracker.repository.BudgetRepository;
 import com.dheeraj.expensetracker.repository.ExpenseRepository;
 import com.dheeraj.expensetracker.repository.UserRepository;
@@ -27,7 +28,9 @@ public class BudgetService {
     }
     public BudgetResponseDTO setBudget(BudgetRequestDTO requestDTO) {
 
-        Budget budget = new Budget();
+        Budget budget = budgetRepository
+                .findTopByOrderByIdDesc()
+                .orElse(new Budget());
 
         budget.setMonthlyBudget(requestDTO.getMonthlyBudget());
 
@@ -40,11 +43,16 @@ public class BudgetService {
         
         responseDTO.setMonthlyBudget(savedBudget.getMonthlyBudget());
 
+        responseDTO.setId(savedBudget.getId());
+
         return responseDTO;
     }
     public BudgetResponseDTO getBudgetSummary() {
 
-        Budget budget = budgetRepository.findAll().get(0);
+        Budget budget = budgetRepository
+                .findTopByOrderByIdDesc()
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Budget not found"));
 
         List<Expense> expenses = expenseRepository.findAll();
 
@@ -62,8 +70,39 @@ public class BudgetService {
         response.setMonthlyBudget(budget.getMonthlyBudget());
         response.setSpentAmount(spentAmount);
         response.setRemainingAmount(remainingAmount);
+        response.setId(budget.getId());
 
         return response;
+    }
+    public BudgetResponseDTO updateBudget(Long id, BudgetRequestDTO requestDTO) {
+
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not found"));
+
+        budget.setMonthlyBudget(requestDTO.getMonthlyBudget());
+
+        Budget updatedBudget = budgetRepository.save(budget);
+
+        BudgetResponseDTO responseDTO = new BudgetResponseDTO();
+        responseDTO.setMonthlyBudget(updatedBudget.getMonthlyBudget());
+
+        return responseDTO;
+    }
+
+    public void deleteBudget(Long id) {
+
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Budget not found"));
+
+        User user = budget.getUser();
+
+        if (user != null) {
+            user.setBudget(null);
+            userRepository.save(user);
+        }
+
+        budgetRepository.delete(budget);
     }
     
 }
