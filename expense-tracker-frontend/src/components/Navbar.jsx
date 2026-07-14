@@ -1,3 +1,11 @@
+import {
+  BarChart3,
+  LayoutDashboard,
+  LogOut,
+  PieChart,
+  PiggyBank,
+  Wallet,
+} from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 function Navbar() {
@@ -10,111 +18,99 @@ function Navbar() {
   }
 
   const linkClass = ({ isActive }) =>
-    isActive
-      ? "bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-all"
-      : "text-slate-600 hover:text-indigo-600 hover:bg-slate-100 px-4 py-2 rounded-lg transition-all";
+    `flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+      isActive
+        ? "bg-indigo-600 text-white shadow-md"
+        : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
+    }`;
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
 
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-8 h-16 flex justify-between items-center">
 
-        <div className="flex items-center justify-between h-16">
+        {/* Logo */}
 
-          {/* Logo */}
+        <div
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center gap-3 cursor-pointer"
+        >
 
-          <div
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-3 cursor-pointer"
-          >
+          <div className="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center">
 
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xl">
-
-              💰
-
-            </div>
-
-            <div>
-
-              <h1 className="font-bold text-xl text-slate-800">
-                ExpenseTracker
-              </h1>
-
-              <p className="text-xs text-slate-500">
-                Personal Finance
-              </p>
-
-            </div>
+            <Wallet size={24} color="white" />
 
           </div>
 
-          {/* Navigation */}
+          <div>
 
-          <div className="hidden md:flex items-center gap-2">
+            <h1 className="font-bold text-xl text-slate-800">
+              ExpenseTracker
+            </h1>
 
-            <NavLink
-              to="/dashboard"
-              className={linkClass}
-            >
-              🏠 Dashboard
-            </NavLink>
-
-            <NavLink
-              to="/expenses"
-              className={linkClass}
-            >
-              💳 Expenses
-            </NavLink>
-
-            <NavLink
-              to="/analytics"
-              className={linkClass}
-            >
-              📊 Analytics
-            </NavLink>
-
-            <NavLink
-              to="/charts"
-              className={linkClass}
-            >
-              📈 Charts
-            </NavLink>
-
-            <NavLink
-              to="/budget"
-              className={linkClass}
-            >
-              💰 Budget
-            </NavLink>
-
-          </div>
-
-          {/* Right Section */}
-
-          <div className="flex items-center gap-4">
-
-            <div className="hidden lg:block text-right">
-
-              <p className="font-semibold text-slate-800">
-                Welcome 👋
-              </p>
-
-              <p className="text-xs text-slate-500">
-                Expense Tracker
-              </p>
-
-            </div>
-
-            <button
-              onClick={logout}
-              className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition-all duration-300"
-            >
-              Logout
-            </button>
+            <p className="text-xs text-slate-500">
+              Personal Finance Manager
+            </p>
 
           </div>
 
         </div>
+
+        {/* Navigation */}
+
+        <div className="hidden lg:flex items-center gap-2">
+
+          <NavLink
+            to="/dashboard"
+            className={linkClass}
+          >
+            <LayoutDashboard size={18} />
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            to="/expenses"
+            className={linkClass}
+          >
+            <Wallet size={18} />
+            Expenses
+          </NavLink>
+
+          <NavLink
+            to="/analytics"
+            className={linkClass}
+          >
+            <BarChart3 size={18} />
+            Analytics
+          </NavLink>
+
+          <NavLink
+            to="/charts"
+            className={linkClass}
+          >
+            <PieChart size={18} />
+            Charts
+          </NavLink>
+
+          <NavLink
+            to="/budget"
+            className={linkClass}
+          >
+            <PiggyBank size={18} />
+            Budget
+          </NavLink>
+
+        </div>
+
+        {/* Logout */}
+
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition-all duration-300"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
 
       </div>
 

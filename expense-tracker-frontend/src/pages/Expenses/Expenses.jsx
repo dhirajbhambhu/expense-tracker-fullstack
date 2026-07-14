@@ -1,13 +1,28 @@
+import {
+  Filter,
+  Pencil,
+  Plus,
+  Receipt,
+  RotateCcw,
+  Search,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+
+import LoadingSpinner from "../../components/LoadingSpinner";
 import Navbar from "../../components/Navbar";
+import PageHeader from "../../components/PageHeader";
 import api from "../../services/api";
 
 function Expenses() {
+
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+
   const [expenses, setExpenses] = useState([]);
+
   const [editId, setEditId] = useState(null);
 
   const [keyword, setKeyword] = useState("");
@@ -19,6 +34,7 @@ function Expenses() {
   const [endDate, setEndDate] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
     fetchExpenses();
@@ -26,61 +42,94 @@ function Expenses() {
   }, []);
 
   async function fetchExpenses() {
+
     try {
+
+      setPageLoading(true);
+
       const token = localStorage.getItem("token");
 
       const response = await api.get("/expenses/page", {
+
         params: {
           page: 0,
           size: 5,
           sortBy: "id",
           direction: "asc",
         },
+
         headers: {
           Authorization: `Bearer ${token}`,
         },
+
       });
 
       setExpenses(response.data.content);
+
     } catch (error) {
+
       console.log(error);
+
       toast.error("Failed to load expenses");
+
+    } finally {
+
+      setPageLoading(false);
+
     }
+
   }
 
   async function fetchCategories() {
+
     try {
+
       const token = localStorage.getItem("token");
 
       const response = await api.get("/category", {
+
         headers: {
           Authorization: `Bearer ${token}`,
         },
+
       });
 
       setCategories(response.data);
+
     } catch (error) {
+
       console.log(error);
+
       toast.error("Failed to load categories");
+
     }
+
   }
 
   async function searchExpenses() {
+
     if (keyword.trim() === "") {
+
       fetchExpenses();
+
       return;
+
     }
 
     try {
+
       const token = localStorage.getItem("token");
 
       const response = await api.get("/expenses/search", {
+
         params: {
           keyword,
         },
+
         headers: {
           Authorization: `Bearer ${token}`,
         },
+
       });
 
       setExpenses(response.data);
@@ -92,6 +141,7 @@ function Expenses() {
       toast.error("Search Failed");
 
     }
+
   }
 
   async function filterExpenses() {
@@ -111,9 +161,7 @@ function Expenses() {
         },
 
         headers: {
-
           Authorization: `Bearer ${token}`,
-
         },
 
       });
@@ -147,6 +195,7 @@ function Expenses() {
     if (title.trim().length < 3) {
 
       toast.warning("Title must be at least 3 characters");
+
       return;
 
     }
@@ -154,6 +203,7 @@ function Expenses() {
     if (amount === "" || Number(amount) <= 0) {
 
       toast.warning("Amount must be greater than 0");
+
       return;
 
     }
@@ -161,6 +211,7 @@ function Expenses() {
     if (description.trim().length < 5) {
 
       toast.warning("Description must be at least 5 characters");
+
       return;
 
     }
@@ -233,11 +284,7 @@ function Expenses() {
 
   async function deleteExpense(id) {
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this expense?"
-    );
-
-    if (!confirmDelete) {
+    if (!window.confirm("Are you sure you want to delete this expense?")) {
       return;
     }
 
@@ -246,9 +293,11 @@ function Expenses() {
       const token = localStorage.getItem("token");
 
       await api.delete(`/expenses/${id}`, {
+
         headers: {
           Authorization: `Bearer ${token}`,
         },
+
       });
 
       toast.success("Expense Deleted Successfully");
@@ -259,7 +308,7 @@ function Expenses() {
 
       console.log(error);
 
-      toast.error("Failed to Delete Expense");
+      toast.error("Delete Failed");
 
     }
 
@@ -284,127 +333,154 @@ function Expenses() {
   }
 
   return (
-  <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-100">
 
-    <Navbar />
+  <Navbar />
 
-    <div className="max-w-6xl mx-auto p-8">
+  <div className="max-w-7xl mx-auto px-8 py-10">
 
-      <div className="bg-white rounded-xl shadow-lg p-8">
+    <PageHeader
+      title="Expense Management"
+      subtitle="Add, update, search and organize all your expenses."
+    />
 
-        <h1 className="text-4xl font-bold text-center mb-8">
-          {editId === null ? "Add Expense" : "Update Expense"}
-        </h1>
+    {pageLoading ? (
 
-        <form onSubmit={handleExpense}>
+      <LoadingSpinner text="Loading Expenses..." />
 
-          {/* Title */}
+    ) : (
 
-          <div className="mb-5">
+      <>
 
-            <label className="block font-semibold mb-2">
-              Title
-            </label>
+        {/* Expense Form */}
 
-            <input
-              type="text"
-              placeholder="Enter Title"
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+        <div className="bg-white rounded-2xl shadow-md p-8 mb-8">
 
-          </div>
+          <h2 className="text-2xl font-bold mb-6">
+            {editId === null ? "Add New Expense" : "Update Expense"}
+          </h2>
 
-          {/* Amount */}
+          <form onSubmit={handleExpense}>
 
-          <div className="mb-5">
+            <div className="grid md:grid-cols-2 gap-6">
 
-            <label className="block font-semibold mb-2">
-              Amount
-            </label>
+              <div>
 
-            <input
-              type="number"
-              placeholder="Enter Amount"
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
+                <label className="block font-medium mb-2">
+                  Title
+                </label>
 
-          </div>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Expense Title"
+                  className="w-full border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
 
-          {/* Description */}
+              </div>
 
-          <div className="mb-6">
+              <div>
 
-            <label className="block font-semibold mb-2">
-              Description
-            </label>
+                <label className="block font-medium mb-2">
+                  Amount
+                </label>
 
-            <textarea
-              rows="3"
-              placeholder="Enter Description"
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Expense Amount"
+                  className="w-full border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
 
-          </div>
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full text-white p-3 rounded-lg transition-all duration-300 ${
-              loading
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700 hover:scale-105"
-            }`}
-          >
-            {loading
-              ? editId === null
-                ? "Saving..."
-                : "Updating..."
-              : editId === null
-              ? "Add Expense"
-              : "Update Expense"}
-          </button>
+            </div>
 
-          {editId !== null && (
+            <div className="mt-6">
 
-            <button
-              type="button"
-              onClick={cancelEdit}
-              className="w-full mt-3 bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-lg transition"
-            >
-              Cancel
-            </button>
+              <label className="block font-medium mb-2">
+                Description
+              </label>
 
-          )}
+              <textarea
+                rows="4"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Expense Description"
+                className="w-full border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              />
 
-        </form>
+            </div>
 
-        <hr className="my-8" />
+            <div className="flex gap-4 mt-8">
 
-        <h2 className="text-3xl font-bold mb-6">
-          All Expenses
-        </h2>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`flex-1 flex items-center justify-center gap-2 rounded-xl text-white p-3 transition ${
+                  loading
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                }`}
+              >
+
+                <Plus size={20} />
+
+                {loading
+                  ? editId === null
+                    ? "Saving..."
+                    : "Updating..."
+                  : editId === null
+                  ? "Add Expense"
+                  : "Update Expense"}
+
+              </button>
+
+              {editId !== null && (
+
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="flex-1 bg-slate-600 hover:bg-slate-700 text-white rounded-xl p-3"
+                >
+                  Cancel
+                </button>
+
+              )}
+
+            </div>
+
+          </form>
+
+        </div>
 
         {/* Filter Section */}
 
-        <div className="bg-gray-50 border rounded-xl p-5 mb-6">
+        <div className="bg-white rounded-2xl shadow-md p-8 mb-8">
 
-          <h3 className="text-xl font-bold mb-4">
-            Filter Expenses
-          </h3>
+          <div className="flex items-center gap-2 mb-6">
 
-          <div className="grid md:grid-cols-3 gap-4">
+            <Filter
+              size={22}
+              className="text-indigo-600"
+            />
+
+            <h2 className="text-2xl font-bold">
+              Filter Expenses
+            </h2>
+
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-5">
 
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="border rounded-lg p-3"
+              className="border rounded-xl p-3"
             >
+
               <option value="">
                 All Categories
               </option>
@@ -426,126 +502,152 @@ function Expenses() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border rounded-lg p-3"
+              className="border rounded-xl p-3"
             />
 
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border rounded-lg p-3"
+              className="border rounded-xl p-3"
             />
 
           </div>
 
-          <div className="flex gap-4 mt-5">
+          <div className="flex gap-4 mt-6">
 
             <button
               type="button"
               onClick={filterExpenses}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg transition"
+              className="flex-1 flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl p-3"
             >
+
+              <Filter size={18} />
+
               Apply Filter
+
             </button>
 
             <button
               type="button"
               onClick={resetFilters}
-              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-lg transition"
+              className="flex-1 flex justify-center items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white rounded-xl p-3"
             >
-              Clear Filter
+
+              <RotateCcw size={18} />
+
+              Reset
+
             </button>
 
           </div>
 
         </div>
 
-        {/* Search Section */}
+        {/* Search */}
 
-        <div className="flex gap-3 mb-8">
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
 
-          <input
-            type="text"
-            placeholder="Search by title..."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            className="flex-1 border rounded-lg p-3"
-          />
+          <div className="flex gap-3">
 
-          <button
-            type="button"
-            onClick={searchExpenses}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-lg transition"
-          >
-            Search
-          </button>
+            <input
+              type="text"
+              placeholder="Search expenses..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="flex-1 border rounded-xl p-3"
+            />
 
-          <button
-            type="button"
-            onClick={() => {
-              setKeyword("");
-              fetchExpenses();
-            }}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-6 rounded-lg transition"
-          >
-            Reset
-          </button>
+            <button
+              type="button"
+              onClick={searchExpenses}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-xl"
+            >
+
+              <Search size={18} />
+
+              Search
+
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+
+                setKeyword("");
+
+                fetchExpenses();
+
+              }}
+              className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-6 rounded-xl"
+            >
+
+              <RotateCcw size={18} />
+
+              Reset
+
+            </button>
+
+          </div>
 
         </div>
                 {expenses.length === 0 ? (
 
-          <div className="bg-gray-50 border rounded-xl p-10 text-center">
+          <div className="bg-white rounded-2xl shadow-md p-12 text-center">
 
-            <div className="text-6xl mb-4">
-              📄
-            </div>
+            <Receipt
+              size={70}
+              className="mx-auto text-slate-400 mb-5"
+            />
 
-            <h3 className="text-2xl font-bold">
-              No Expenses Yet
-            </h3>
+            <h2 className="text-3xl font-bold text-slate-700">
+              No Expenses Found
+            </h2>
 
-            <p className="text-gray-500 mt-2">
-              Start by adding your first expense.
+            <p className="text-gray-500 mt-3">
+              Add your first expense to start tracking your spending.
             </p>
 
           </div>
 
         ) : (
 
-          <div className="grid gap-4">
+          <div className="grid gap-5">
 
             {expenses.map((expense) => (
 
               <div
                 key={expense.id}
-                className="bg-white border rounded-xl shadow-md p-5 hover:shadow-xl transition-all"
+                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border"
               >
 
                 <div className="flex justify-between items-start">
 
-                  <div>
+                  <div className="space-y-3">
 
-                    <h3 className="text-2xl font-bold mb-3">
+                    <h2 className="text-2xl font-bold text-slate-800">
                       {expense.title}
-                    </h3>
+                    </h2>
 
-                    <p className="mb-2">
-                      <strong>Amount:</strong> ₹ {expense.amount}
+                    <p className="text-lg text-indigo-600 font-semibold">
+                      ₹ {expense.amount}
                     </p>
 
-                    <p className="mb-2">
-                      <strong>Description:</strong> {expense.description}
+                    <p className="text-gray-600">
+                      {expense.description}
                     </p>
 
-                    <p className="mb-2">
-                      <strong>Category:</strong>{" "}
-                      {expense.categoryName ?? "Not Assigned"}
-                    </p>
+                    <div className="flex flex-wrap gap-3 mt-4">
 
-                    <p>
-                      <strong>Date:</strong>{" "}
-                      {expense.date ?? "N/A"}
-                    </p>
+                      <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">
+                        {expense.categoryName ?? "No Category"}
+                      </span>
+
+                      <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm">
+                        {expense.date ?? "No Date"}
+                      </span>
+
+                    </div>
 
                   </div>
 
@@ -553,16 +655,24 @@ function Expenses() {
 
                     <button
                       onClick={() => editExpense(expense)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
+                      className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl transition"
                     >
+
+                      <Pencil size={18} />
+
                       Edit
+
                     </button>
 
                     <button
                       onClick={() => deleteExpense(expense.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
+                      className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl transition"
                     >
+
+                      <Trash2 size={18} />
+
                       Delete
+
                     </button>
 
                   </div>
@@ -577,11 +687,13 @@ function Expenses() {
 
         )}
 
-      </div>
+      </>
 
-    </div>
+    )}
 
   </div>
+
+</div>
 );
 
 }

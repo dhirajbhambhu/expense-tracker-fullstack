@@ -1,5 +1,5 @@
+import { BarChart3, PieChart as PieChartIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import {
   Bar,
   BarChart,
@@ -13,7 +13,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
+import LoadingSpinner from "../../components/LoadingSpinner";
 import Navbar from "../../components/Navbar";
+import PageHeader from "../../components/PageHeader";
 import api from "../../services/api";
 
 function Charts() {
@@ -23,14 +26,14 @@ function Charts() {
   const [loading, setLoading] = useState(true);
 
   const COLORS = [
-    "#3B82F6",
-    "#10B981",
-    "#F59E0B",
-    "#EF4444",
-    "#8B5CF6",
-    "#EC4899",
-    "#14B8A6",
-    "#F97316",
+    "#2563EB",
+    "#16A34A",
+    "#EA580C",
+    "#DC2626",
+    "#7C3AED",
+    "#0891B2",
+    "#E11D48",
+    "#CA8A04",
   ];
 
   useEffect(() => {
@@ -38,10 +41,9 @@ function Charts() {
   }, []);
 
   async function loadCharts() {
+    
 
     try {
-
-      setLoading(true);
 
       const token = localStorage.getItem("token");
 
@@ -61,34 +63,20 @@ function Charts() {
 
       ]);
 
-      if (Array.isArray(categoryResponse.data)) {
+     console.log("Category API:", categoryResponse.data);
+console.log("Month API:", monthResponse.data);
 
-        setCategoryData(categoryResponse.data);
+setCategoryData(
+  Array.isArray(categoryResponse.data) ? categoryResponse.data : []
+);
 
-      } else {
-
-        setCategoryData([]);
-
-      }
-
-      if (Array.isArray(monthResponse.data)) {
-
-        setMonthData(monthResponse.data);
-
-      } else {
-
-        setMonthData([]);
-
-      }
+setMonthData(
+  Array.isArray(monthResponse.data) ? monthResponse.data : []
+);
 
     } catch (error) {
 
       console.log(error);
-
-      toast.error("Failed to load charts");
-
-      setCategoryData([]);
-      setMonthData([]);
 
     } finally {
 
@@ -98,57 +86,62 @@ function Charts() {
 
   }
 
+  console.log("Category Data:", categoryData);
+console.log("Category Array:", Array.isArray(categoryData));
+
+console.log("Month Data:", monthData);
+console.log("Month Array:", Array.isArray(monthData));
+
   return (
 
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-100">
 
       <Navbar />
 
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto px-8 py-10">
 
-        <h1 className="text-4xl font-bold text-center mb-10">
-          Expense Charts
-        </h1>
+        <PageHeader
+          title="Expense Charts"
+          subtitle="Visualize your expenses using category and monthly reports."
+        />
 
         {loading ? (
 
-          <div className="bg-white rounded-xl shadow-lg p-20 text-center">
-
-            <h2 className="text-2xl font-semibold text-gray-600">
-              Loading Charts...
-            </h2>
-
-          </div>
+          <LoadingSpinner text="Loading Charts..." />
 
         ) : (
 
           <div className="grid lg:grid-cols-2 gap-8">
 
-            {/* Pie Chart */}
+            <div className="bg-white rounded-2xl shadow-md p-8">
 
-            <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all">
+              <div className="flex items-center gap-3 mb-6">
 
-              <h2 className="text-2xl font-bold text-center mb-6">
-                Expenses By Category
-              </h2>
+                <PieChartIcon
+                  size={24}
+                  className="text-indigo-600"
+                />
+
+                <h2 className="text-2xl font-bold">
+                  Category Wise Expenses
+                </h2>
+
+              </div>
 
               {categoryData.length === 0 ? (
 
-                <div className="text-center py-20">
+                <div className="text-center text-gray-500 py-20">
 
-                  <div className="text-6xl mb-4">
-                    📊
-                  </div>
-
-                  <p className="text-gray-500">
-                    No Category Data Found
-                  </p>
+                  No Category Data Found
 
                 </div>
 
               ) : (
 
-                <ResponsiveContainer width="100%" height={350}>
+                <ResponsiveContainer
+                  width="100%"
+                  height={350}
+                >
 
                   <PieChart>
 
@@ -160,7 +153,7 @@ function Charts() {
                       label
                     >
 
-                      {categoryData.map((entry, index) => (
+                      {categoryData.map((item, index) => (
 
                         <Cell
                           key={index}
@@ -183,31 +176,35 @@ function Charts() {
 
             </div>
 
-            {/* Bar Chart */}
+            <div className="bg-white rounded-2xl shadow-md p-8">
 
-            <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all">
+              <div className="flex items-center gap-3 mb-6">
 
-              <h2 className="text-2xl font-bold text-center mb-6">
-                Monthly Expenses
-              </h2>
+                <BarChart3
+                  size={24}
+                  className="text-indigo-600"
+                />
+
+                <h2 className="text-2xl font-bold">
+                  Monthly Expenses
+                </h2>
+
+              </div>
 
               {monthData.length === 0 ? (
 
-                <div className="text-center py-20">
+                <div className="text-center text-gray-500 py-20">
 
-                  <div className="text-6xl mb-4">
-                    📈
-                  </div>
-
-                  <p className="text-gray-500">
-                    No Monthly Data Found
-                  </p>
+                  No Monthly Data Found
 
                 </div>
 
               ) : (
 
-                <ResponsiveContainer width="100%" height={350}>
+                <ResponsiveContainer
+                  width="100%"
+                  height={350}
+                >
 
                   <BarChart data={monthData}>
 
@@ -223,8 +220,7 @@ function Charts() {
 
                     <Bar
                       dataKey="amount"
-                      fill="#3B82F6"
-                      radius={[8, 8, 0, 0]}
+                      fill="#4F46E5"
                     />
 
                   </BarChart>

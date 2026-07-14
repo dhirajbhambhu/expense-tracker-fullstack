@@ -1,109 +1,100 @@
+import {
+  ArrowRight,
+  BarChart3,
+  PieChart,
+  PiggyBank,
+  Wallet,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import PageHeader from "../../components/PageHeader";
 
 function Dashboard() {
 
   const navigate = useNavigate();
 
-  const cards = [
+  const modules = [
     {
       title: "Expenses",
-      description: "Add, edit and manage your daily expenses.",
-      path: "/expenses",
+      description: "Add, update and manage your daily expenses.",
+      icon: <Wallet size={42} />,
       color: "bg-blue-600",
-      icon: "💰",
+      path: "/expenses",
     },
     {
       title: "Analytics",
-      description: "Track spending with detailed statistics.",
-      path: "/analytics",
+      description: "Track spending with real-time statistics.",
+      icon: <BarChart3 size={42} />,
       color: "bg-emerald-600",
-      icon: "📊",
+      path: "/analytics",
     },
     {
       title: "Charts",
-      description: "Visualize your expenses using charts.",
-      path: "/charts",
+      description: "Visualize spending using interactive charts.",
+      icon: <PieChart size={42} />,
       color: "bg-violet-600",
-      icon: "📈",
+      path: "/charts",
     },
     {
       title: "Budget",
-      description: "Set and monitor your monthly budget.",
-      path: "/budget",
+      description: "Set your monthly budget and monitor spending.",
+      icon: <PiggyBank size={42} />,
       color: "bg-amber-500",
-      icon: "💵",
+      path: "/budget",
     },
   ];
 
   return (
+
     <div className="min-h-screen bg-slate-100">
 
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-8 py-10">
 
-        {/* Header */}
+        <PageHeader
+          title="Dashboard"
+          subtitle="Manage your expenses, monitor your budget and analyze your spending from one place."
+        />
 
-        <div className="bg-white rounded-2xl shadow-md p-10 mb-10">
+        {/* Quick Access */}
 
-          <h1 className="text-4xl font-bold text-slate-800">
-            Welcome Back 👋
-          </h1>
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-7">
 
-          <p className="text-gray-600 mt-3 text-lg">
-            Manage your expenses, monitor your budget and understand your
-            spending with one dashboard.
-          </p>
-
-        </div>
-
-        {/* Quick Actions */}
-
-        <div className="mb-6">
-
-          <h2 className="text-3xl font-bold text-slate-800">
-            Quick Actions
-          </h2>
-
-          <p className="text-gray-500 mt-1">
-            Choose a module to continue.
-          </p>
-
-        </div>
-
-        {/* Cards */}
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-7">
-
-          {cards.map((card) => (
+          {modules.map((module) => (
 
             <div
-              key={card.title}
-              onClick={() => navigate(card.path)}
-              className={`${card.color}
-                rounded-2xl
-                p-7
-                text-white
-                cursor-pointer
-                shadow-lg
-                hover:-translate-y-2
-                hover:shadow-2xl
-                transition-all
-                duration-300`}
+              key={module.title}
+              onClick={() => navigate(module.path)}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1"
             >
 
-              <div className="text-5xl mb-6">
-                {card.icon}
+              <div
+                className={`${module.color} h-28 flex items-center justify-center text-white`}
+              >
+                {module.icon}
               </div>
 
-              <h2 className="text-2xl font-bold mb-3">
-                {card.title}
-              </h2>
+              <div className="p-6">
 
-              <p className="text-white/90 leading-6">
-                {card.description}
-              </p>
+                <h2 className="text-2xl font-bold text-slate-800 mb-3">
+                  {module.title}
+                </h2>
+
+                <p className="text-gray-500 leading-6 mb-6">
+                  {module.description}
+                </p>
+
+                <button
+                  className="flex items-center gap-2 text-indigo-600 font-semibold hover:gap-3 transition-all"
+                >
+                  Open Module
+
+                  <ArrowRight size={18} />
+
+                </button>
+
+              </div>
 
             </div>
 
@@ -111,17 +102,20 @@ function Dashboard() {
 
         </div>
 
-        {/* Footer */}
+        {/* Information */}
 
-        <div className="bg-white rounded-2xl shadow-md p-8 mt-12">
+        <div className="mt-12 bg-white rounded-2xl shadow-md p-8">
 
           <h2 className="text-2xl font-bold text-slate-800 mb-3">
             Expense Tracker
           </h2>
 
-          <p className="text-gray-600 leading-7">
-            Keep track of your daily expenses, monitor your monthly budget,
-            analyze spending patterns and make smarter financial decisions.
+          <p className="text-gray-600 leading-8">
+
+            This application helps you record expenses, organize them by
+            category, manage monthly budgets, analyze spending habits and
+            visualize financial data through interactive charts.
+
           </p>
 
         </div>
@@ -129,6 +123,7 @@ function Dashboard() {
       </div>
 
     </div>
+
   );
 
 }

@@ -1,6 +1,16 @@
+import {
+  BarChart3,
+  Receipt,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+
+import LoadingSpinner from "../../components/LoadingSpinner";
 import Navbar from "../../components/Navbar";
+import PageHeader from "../../components/PageHeader";
+import StatCard from "../../components/StatCard";
 import api from "../../services/api";
 
 function Analytics() {
@@ -48,81 +58,56 @@ function Analytics() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-100">
 
       <Navbar />
 
-      <div className="max-w-5xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto px-8 py-10">
 
-        <div className="bg-white shadow-xl rounded-xl p-8">
+        <PageHeader
+          title="Expense Analytics"
+          subtitle="Understand your spending through key financial metrics."
+        />
 
-          <h1 className="text-4xl font-bold text-center mb-8">
-            Expense Analytics
-          </h1>
+        {loading ? (
 
-          {loading ? (
+          <LoadingSpinner text="Loading analytics..." />
 
-            <div className="text-center text-2xl font-semibold text-gray-500 py-20">
-              Loading Analytics...
-            </div>
+        ) : (
 
-          ) : (
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <StatCard
+              title="Total Expense"
+              value={`₹ ${analytics.totalExpense}`}
+              icon={<Wallet size={28} />}
+              color="bg-blue-600"
+            />
 
-              <div className="bg-blue-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
+            <StatCard
+              title="Highest Expense"
+              value={`₹ ${analytics.highestExpense}`}
+              icon={<TrendingUp size={28} />}
+              color="bg-red-600"
+            />
 
-                <h2 className="text-lg font-semibold">
-                  Total Expense
-                </h2>
+            <StatCard
+              title="Average Expense"
+              value={`₹ ${analytics.averageExpense}`}
+              icon={<BarChart3 size={28} />}
+              color="bg-green-600"
+            />
 
-                <p className="text-4xl font-bold mt-4">
-                  ₹ {analytics.totalExpense}
-                </p>
+            <StatCard
+              title="Transactions"
+              value={analytics.totalTransactions}
+              icon={<Receipt size={28} />}
+              color="bg-violet-600"
+            />
 
-              </div>
+          </div>
 
-              <div className="bg-red-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
-
-                <h2 className="text-lg font-semibold">
-                  Highest Expense
-                </h2>
-
-                <p className="text-4xl font-bold mt-4">
-                  ₹ {analytics.highestExpense}
-                </p>
-
-              </div>
-
-              <div className="bg-green-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
-
-                <h2 className="text-lg font-semibold">
-                  Average Expense
-                </h2>
-
-                <p className="text-4xl font-bold mt-4">
-                  ₹ {analytics.averageExpense}
-                </p>
-
-              </div>
-
-              <div className="bg-purple-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
-
-                <h2 className="text-lg font-semibold">
-                  Total Transactions
-                </h2>
-
-                <p className="text-4xl font-bold mt-4">
-                  {analytics.totalTransactions}
-                </p>
-
-              </div>
-
-            </div>
-
-          )}
-
-        </div>
+        )}
 
       </div>
 
