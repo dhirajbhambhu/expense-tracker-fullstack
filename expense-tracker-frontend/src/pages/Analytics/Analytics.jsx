@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Navbar from "../../components/Navbar";
 import api from "../../services/api";
 
 function Analytics() {
+
   const [analytics, setAnalytics] = useState({
     totalExpense: 0,
     highestExpense: 0,
@@ -9,8 +12,16 @@ function Analytics() {
     totalTransactions: 0,
   });
 
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
   async function fetchAnalytics() {
+
     try {
+
       const token = localStorage.getItem("token");
 
       const response = await api.get("/expenses/analytics", {
@@ -20,72 +31,105 @@ function Analytics() {
       });
 
       setAnalytics(response.data);
+
     } catch (error) {
+
       console.log(error);
-      console.log(error.response);
-      alert("Failed to load analytics");
+
+      toast.error("Failed to load analytics");
+
+    } finally {
+
+      setLoading(false);
+
     }
+
   }
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-[700px]">
 
-        <h1 className="text-4xl font-bold text-center mb-8">
-          Expense Analytics
-        </h1>
+    <div className="min-h-screen bg-gray-100">
 
-        <div className="grid grid-cols-2 gap-6">
+      <Navbar />
 
-          <div className="bg-blue-500 text-white rounded-lg p-6 shadow">
-            <h2 className="text-lg font-semibold">
-              Total Expense
-            </h2>
+      <div className="max-w-5xl mx-auto p-8">
 
-            <p className="text-3xl font-bold mt-3">
-              ₹{analytics.totalExpense}
-            </p>
-          </div>
+        <div className="bg-white shadow-xl rounded-xl p-8">
 
-          <div className="bg-red-500 text-white rounded-lg p-6 shadow">
-            <h2 className="text-lg font-semibold">
-              Highest Expense
-            </h2>
+          <h1 className="text-4xl font-bold text-center mb-8">
+            Expense Analytics
+          </h1>
 
-            <p className="text-3xl font-bold mt-3">
-              ₹{analytics.highestExpense}
-            </p>
-          </div>
+          {loading ? (
 
-          <div className="bg-green-500 text-white rounded-lg p-6 shadow">
-            <h2 className="text-lg font-semibold">
-              Average Expense
-            </h2>
+            <div className="text-center text-2xl font-semibold text-gray-500 py-20">
+              Loading Analytics...
+            </div>
 
-            <p className="text-3xl font-bold mt-3">
-              ₹{analytics.averageExpense}
-            </p>
-          </div>
+          ) : (
 
-          <div className="bg-purple-500 text-white rounded-lg p-6 shadow">
-            <h2 className="text-lg font-semibold">
-              Total Transactions
-            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
 
-            <p className="text-3xl font-bold mt-3">
-              {analytics.totalTransactions}
-            </p>
-          </div>
+              <div className="bg-blue-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
+
+                <h2 className="text-lg font-semibold">
+                  Total Expense
+                </h2>
+
+                <p className="text-4xl font-bold mt-4">
+                  ₹ {analytics.totalExpense}
+                </p>
+
+              </div>
+
+              <div className="bg-red-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
+
+                <h2 className="text-lg font-semibold">
+                  Highest Expense
+                </h2>
+
+                <p className="text-4xl font-bold mt-4">
+                  ₹ {analytics.highestExpense}
+                </p>
+
+              </div>
+
+              <div className="bg-green-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
+
+                <h2 className="text-lg font-semibold">
+                  Average Expense
+                </h2>
+
+                <p className="text-4xl font-bold mt-4">
+                  ₹ {analytics.averageExpense}
+                </p>
+
+              </div>
+
+              <div className="bg-purple-500 text-white rounded-xl shadow-lg p-6 hover:scale-105 transition-all duration-300">
+
+                <h2 className="text-lg font-semibold">
+                  Total Transactions
+                </h2>
+
+                <p className="text-4xl font-bold mt-4">
+                  {analytics.totalTransactions}
+                </p>
+
+              </div>
+
+            </div>
+
+          )}
 
         </div>
 
       </div>
+
     </div>
+
   );
+
 }
 
 export default Analytics;
