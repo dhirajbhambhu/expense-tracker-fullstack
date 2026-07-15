@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../services/api";
 
 function Login() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,19 +12,27 @@ function Login() {
   const navigate = useNavigate();
 
   async function handleLogin(event) {
+
     event.preventDefault();
 
     if (email.trim() === "") {
+
       toast.warning("Please enter email");
+
       return;
+
     }
 
     if (password.trim() === "") {
+
       toast.warning("Please enter password");
+
       return;
+
     }
 
     try {
+
       setLoading(true);
 
       const response = await api.post("/auth/login", {
@@ -36,7 +45,9 @@ function Login() {
       toast.success("Login Successful");
 
       setTimeout(() => {
+
         navigate("/dashboard");
+
       }, 1000);
 
     } catch (error) {
@@ -50,9 +61,11 @@ function Login() {
       setLoading(false);
 
     }
+
   }
 
   return (
+
     <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
 
       <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full">
@@ -117,12 +130,31 @@ function Login() {
             {loading ? "Logging in..." : "Login"}
           </button>
 
+          {/* Register Section */}
+
+          <div className="mt-6 text-center">
+
+            <p className="text-gray-600 mb-3">
+              Don't have an account?
+            </p>
+
+            <Link
+              to="/register"
+              className="block w-full border-2 border-blue-600 text-blue-600 font-semibold py-3 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300"
+            >
+              Create New Account
+            </Link>
+
+          </div>
+
         </form>
 
       </div>
 
     </div>
+
   );
+
 }
 
 export default Login;
