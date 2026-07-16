@@ -129,15 +129,6 @@ Full interactive documentation available via [Swagger UI](https://expense-tracke
 
 ---
 
-## 📸 Current Screens
-- Login Page
-- Register Page
-- Dashboard
-- Protected Routes
-
-> 📌 *Add screenshots here — drop images into a `/screenshots` folder and reference them, e.g. `![Login Page](./screenshots/login.png)`*
-
----
 
 ## 📌 Upcoming Features
 - [ ] Dashboard charts & data visualization
